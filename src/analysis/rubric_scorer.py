@@ -67,14 +67,17 @@ class RubricScorer:
                 "or pass api_key parameter."
             )
 
+        # Set API key in environment for pydantic-ai
+        os.environ["OPENAI_API_KEY"] = self.api_key
+
         # Load rubric
         self.rubric_items = self._load_rubric(rubric_path)
 
         # Create the PydanticAI agent
-        model = OpenAIModel(model_name, api_key=self.api_key)
+        model = OpenAIModel(model_name)
         self.agent = Agent(
-            model,
-            result_type=RubricEvaluation,
+            model=model,
+            output_type=RubricEvaluation,
             system_prompt=RUBRIC_SYSTEM_PROMPT,
         )
 
@@ -189,7 +192,7 @@ For each completed item, provide the evidence (quote or paraphrase) from the tra
 
         try:
             result = await self.agent.run(prompt)
-            evaluation = result.data
+            evaluation = result.output
 
             # Update completed items (items stay completed once checked)
             self._completed_items.update(evaluation.completed_items)

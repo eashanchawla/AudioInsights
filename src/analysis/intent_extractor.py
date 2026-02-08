@@ -57,11 +57,14 @@ class IntentExtractor:
                 "or pass api_key parameter."
             )
 
+        # Set API key in environment for pydantic-ai
+        os.environ["OPENAI_API_KEY"] = self.api_key
+
         # Create the PydanticAI agent
-        model = OpenAIModel(model_name, api_key=self.api_key)
+        model = OpenAIModel(model_name)
         self.agent = Agent(
-            model,
-            result_type=ExtractedInfo,
+            model=model,
+            output_type=ExtractedInfo,
             system_prompt=EXTRACTION_SYSTEM_PROMPT,
         )
 
@@ -96,8 +99,8 @@ Extract the caller's information, their intent, and any other relevant details."
         try:
             result = await self.agent.run(prompt)
             self._last_transcript = transcript
-            self._last_result = result.data
-            return result.data
+            self._last_result = result.output
+            return result.output
         except Exception as e:
             print(f"Error during extraction: {e}")
             return self._last_result or ExtractedInfo()

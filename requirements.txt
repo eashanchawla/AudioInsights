@@ -19,9 +19,9 @@ pydub==0.25.1
 librosa==0.10.2
 
 # LLM Integration for intent/rubric analysis
-pydantic-ai==0.0.14
-pydantic==2.9.2
-openai==1.51.0
+pydantic-ai>=1.56.0
+pydantic>=2.10
+openai>=1.51.0
 
 # Frontend
 streamlit==1.38.0
@@ -32,7 +32,6 @@ pandas==2.2.3
 PyYAML==6.0.2
 
 # Async support
-asyncio-compat==0.1.1
 nest-asyncio==1.6.0
 
 # Other utilities

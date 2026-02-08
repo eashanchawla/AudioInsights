@@ -228,39 +228,45 @@ def main():
         st.session_state.current_index = 0
         st.session_state.messages = []
         st.session_state.transcript = ""
+        st.session_state.extracted_info = None
+        st.session_state.rubric_result = None
+        st.rerun()
 
-        progress = st.progress(0)
+    # Continue processing if demo is running
+    if st.session_state.demo_running and st.session_state.current_index < len(SAMPLE_CONVERSATION):
+        progress = st.progress(st.session_state.current_index / len(SAMPLE_CONVERSATION))
         status = st.empty()
 
-        # Process conversation
-        for i, turn in enumerate(SAMPLE_CONVERSATION):
-            if not st.session_state.demo_running:
-                break
+        i = st.session_state.current_index
+        turn = SAMPLE_CONVERSATION[i]
 
-            # Add to messages
-            st.session_state.messages.append(turn)
-            st.session_state.transcript += f"\n{turn['speaker']}: {turn['text']}"
+        # Add to messages
+        st.session_state.messages.append(turn)
+        st.session_state.transcript += f"\n{turn['speaker']}: {turn['text']}"
+        st.session_state.current_index += 1
 
-            # Update progress
-            progress.progress((i + 1) / len(SAMPLE_CONVERSATION))
-            status.text(f"Processing... ({i + 1}/{len(SAMPLE_CONVERSATION)})")
+        # Update progress
+        progress.progress(st.session_state.current_index / len(SAMPLE_CONVERSATION))
+        status.text(f"Processing... ({st.session_state.current_index}/{len(SAMPLE_CONVERSATION)})")
 
-            # Run analysis every few turns
-            if (i + 1) % 3 == 0 or i == len(SAMPLE_CONVERSATION) - 1:
-                status.text("Running analysis...")
-                info, rubric = run_analysis(st.session_state.transcript)
-                if info:
-                    st.session_state.extracted_info = info
-                if rubric:
-                    st.session_state.rubric_result = rubric
+        # Run analysis every few turns
+        if st.session_state.current_index % 3 == 0 or st.session_state.current_index == len(SAMPLE_CONVERSATION):
+            status.text("Running analysis...")
+            info, rubric = run_analysis(st.session_state.transcript)
+            if info:
+                st.session_state.extracted_info = info
+            if rubric:
+                st.session_state.rubric_result = rubric
 
-            # Delay to simulate real-time
+        # Check if done
+        if st.session_state.current_index >= len(SAMPLE_CONVERSATION):
+            st.session_state.demo_running = False
+            st.session_state.demo_complete = True
+            st.rerun()
+        else:
+            # Delay to simulate real-time, then continue
             time.sleep(turn["delay"] * 0.5)  # Faster for demo
             st.rerun()
-
-        st.session_state.demo_running = False
-        st.session_state.demo_complete = True
-        st.rerun()
 
     if st.session_state.demo_complete:
         st.success("✅ Demo complete! The analysis shows how the system tracks agent performance in real-time.")
