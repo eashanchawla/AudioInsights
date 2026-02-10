@@ -1,0 +1,48 @@
+# Agent Performance Rubric
+# Each item represents an expected behavior during a customer service call
+
+rubric:
+  - id: greeting
+    description: "Greeted the customer professionally"
+    detection_hint: "Agent said hello, good morning/afternoon, or welcomed the customer"
+    priority: 1
+
+  - id: identification
+    description: "Introduced themselves by name"
+    detection_hint: "Agent stated their name, e.g., 'My name is...' or 'This is [name] speaking'"
+    priority: 1
+
+  - id: verify_customer
+    description: "Verified customer identity"
+    detection_hint: "Agent asked for customer's name, account number, or other identifying information"
+    priority: 2
+
+  - id: active_listening
+    description: "Demonstrated active listening"
+    detection_hint: "Agent acknowledged what customer said, paraphrased, or asked clarifying questions"
+    priority: 2
+
+  - id: acknowledge_issue
+    description: "Acknowledged the customer's issue or concern"
+    detection_hint: "Agent expressed understanding of the problem, showed empathy, or validated customer's feelings"
+    priority: 2
+
+  - id: provide_solution
+    description: "Provided a solution or next steps"
+    detection_hint: "Agent offered a resolution, explained what will happen next, or provided options"
+    priority: 3
+
+  - id: confirm_understanding
+    description: "Confirmed customer understanding"
+    detection_hint: "Agent asked if customer understood, if they have questions, or summarized the resolution"
+    priority: 3
+
+  - id: offer_additional_help
+    description: "Offered additional assistance"
+    detection_hint: "Agent asked if there's anything else they can help with"
+    priority: 4
+
+  - id: professional_closing
+    description: "Closed the call professionally"
+    detection_hint: "Agent thanked the customer, wished them well, or provided a proper goodbye"
+    priority: 4
