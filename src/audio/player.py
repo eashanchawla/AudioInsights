@@ -39,6 +39,9 @@ class AudioPlayer:
             overlap_sec: Overlap between chunks to avoid cutting off words
             simulate_realtime: If True, add delays to simulate real-time playback
         """
+        if overlap_sec >= chunk_duration_sec:
+            raise ValueError("overlap_sec must be less than chunk_duration_sec")
+
         self.chunk_duration_sec = chunk_duration_sec
         self.overlap_sec = overlap_sec
         self.simulate_realtime = simulate_realtime
@@ -67,6 +70,9 @@ class AudioPlayer:
         # Try different loading methods
         audio, sr = self._load_audio(file_path)
 
+        if sr <= 0:
+            raise ValueError("Sample rate from audio file must be greater than 0")
+
         self._audio = audio
         self._sample_rate = sr
 
@@ -74,7 +80,7 @@ class AudioPlayer:
 
     def _load_audio(self, file_path: Path) -> Tuple[np.ndarray, int]:
         """Load audio using available libraries."""
-        suffix = file_path.suffix.lower()
+        errors = []
 
         # Try pydub first (handles many formats including opus)
         try:
@@ -95,7 +101,7 @@ class AudioPlayer:
 
             return samples, sr
         except Exception as e:
-            pass
+            errors.append(f"pydub: {e}")
 
         # Try torchaudio
         try:
@@ -110,7 +116,7 @@ class AudioPlayer:
                 audio = audio.T  # Stereo: [samples, channels]
             return audio, sr
         except Exception as e:
-            pass
+            errors.append(f"torchaudio: {e}")
 
         # Try librosa as last resort
         try:
@@ -121,16 +127,20 @@ class AudioPlayer:
                 audio = audio.T  # [samples, channels]
             return audio, sr
         except Exception as e:
-            raise RuntimeError(
-                f"Could not load audio file {file_path}. "
-                f"Tried pydub, torchaudio, and librosa. "
-                f"Make sure ffmpeg is installed for opus support."
-            )
+            errors.append(f"librosa: {e}")
+
+        error_details = "\n".join(errors)
+        raise RuntimeError(
+            f"Could not load audio file {file_path}. "
+            f"Tried pydub, torchaudio, and librosa.\n"
+            f"Errors encountered:\n{error_details}\n"
+            f"Make sure ffmpeg is installed for opus support."
+        )
 
     @property
     def duration_sec(self) -> float:
         """Get total duration of loaded audio in seconds."""
-        if self._audio is None or self._sample_rate is None:
+        if self._audio is None or self._sample_rate is None or self._sample_rate <= 0:
             return 0.0
         n_samples = len(self._audio) if self._audio.ndim == 1 else self._audio.shape[0]
         return n_samples / self._sample_rate
@@ -156,6 +166,9 @@ class AudioPlayer:
         """
         if self._audio is None or self._sample_rate is None:
             raise RuntimeError("No audio loaded. Call load() first.")
+
+        if self._sample_rate <= 0:
+            raise ValueError("Sample rate must be greater than 0")
 
         # Calculate chunk parameters
         chunk_samples = int(self.chunk_duration_sec * self._sample_rate)
