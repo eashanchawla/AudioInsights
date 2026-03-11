@@ -76,6 +76,9 @@ def run_analysis(transcript: str):
         rubric = scorer.evaluate_sync(transcript)
 
         return info, rubric
+    except ValueError as e:
+        st.error(f"Configuration Error: {e}")
+        return None, None
     except Exception as e:
         st.error(f"Analysis error: {e}")
         return None, None
