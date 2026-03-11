@@ -25,7 +25,7 @@ from src.transcription.whisper_transcriber import WhisperTranscriber
 from src.analysis.intent_extractor import IntentExtractor
 from src.analysis.rubric_scorer import RubricScorer
 from src.analysis.models import AnalysisTriggerState, ExtractedInfo, RubricResult
-from src.config.settings import Settings
+from src.config.settings import default_settings
 
 
 def init_session_state():
@@ -99,7 +99,7 @@ def render_sidebar():
     )
 
     # Or use sample file
-    sample_file = Path(__file__).parent / "data" / "sample_call.opus"
+    sample_file = default_settings.data_dir / "sample_call.opus"
     use_sample = False
 
     if sample_file.exists():
