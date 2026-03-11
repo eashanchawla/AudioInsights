@@ -8,7 +8,7 @@ accelerate==0.34.2
 # On Mac with Apple Silicon, install mlx-whisper separately:
 #   pip install mlx-whisper
 # For other platforms, openai-whisper works:
-openai-whisper==20231117
+openai-whisper>=20231117
 
 # Voice Activity Detection
 silero-vad==5.1

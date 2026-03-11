@@ -27,11 +27,22 @@ AudioInsights is a prototype that demonstrates real-time analysis of customer se
 
 ### Installation
 
+The easiest way to set up the project is using the provided setup script:
+
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/AudioInsights.git
 cd AudioInsights
 
+# Run the setup script
+./setup.sh
+```
+
+The script will check for prerequisites (FFmpeg, Python 3.10+), create a virtual environment, install dependencies, and help you set up your `.env` file.
+
+Alternatively, you can set it up manually:
+
+```bash
 # Create virtual environment
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
