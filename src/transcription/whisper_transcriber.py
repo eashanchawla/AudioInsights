@@ -151,6 +151,17 @@ class WhisperTranscriber:
         Returns:
             TranscriptionResult with transcribed text
         """
+        if len(audio) == 0:
+            return TranscriptionResult(
+                text="",
+                start_time=start_time,
+                end_time=end_time if end_time is not None else start_time,
+                language=self.language,
+            )
+
+        if sample_rate <= 0:
+            raise ValueError("Sample rate must be greater than 0")
+
         if self._model is None:
             self.load_model()
 
@@ -160,7 +171,9 @@ class WhisperTranscriber:
         # Ensure audio is float32 and normalized
         audio = audio.astype(np.float32)
         if audio.max() > 1.0 or audio.min() < -1.0:
-            audio = audio / max(abs(audio.max()), abs(audio.min()))
+            max_val = max(abs(audio.max()), abs(audio.min()))
+            if max_val > 0:
+                audio = audio / max_val
 
         # Transcribe based on backend
         if self._backend == "mlx_whisper":
