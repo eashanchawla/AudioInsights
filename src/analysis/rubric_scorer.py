@@ -63,8 +63,8 @@ class RubricScorer:
 
         if not self.api_key:
             raise ValueError(
-                "OpenAI API key is required. Set OPENAI_API_KEY environment variable "
-                "or pass api_key parameter."
+                "OpenAI API key is required. Set OPENAI_API_KEY in your .env file "
+                "or as an environment variable."
             )
 
         # Set API key in environment for pydantic-ai

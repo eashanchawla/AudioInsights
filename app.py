@@ -54,8 +54,8 @@ def check_api_key() -> bool:
     if not api_key:
         st.sidebar.error(
             "⚠️ OpenAI API key not found!\n\n"
-            "Set it in your environment:\n"
-            "```\nexport OPENAI_API_KEY='your-key'\n```"
+            "Set it in your `.env` file or environment:\n"
+            "```\nOPENAI_API_KEY='your-key'\n```"
         )
         # Allow user to input API key directly
         api_key = st.sidebar.text_input("Or enter API key:", type="password")
@@ -416,8 +416,13 @@ def main():
             thread.start()
 
             # Initialize analyzers
-            intent_extractor = IntentExtractor()
-            rubric_scorer = RubricScorer()
+            try:
+                intent_extractor = IntentExtractor()
+                rubric_scorer = RubricScorer()
+            except ValueError as e:
+                st.session_state.is_processing = False
+                st.error(f"Configuration Error: {e}")
+                st.rerun()
             analysis_trigger = AnalysisTriggerState()
 
             # Progress display
