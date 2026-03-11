@@ -68,8 +68,9 @@ streamlit run app.py
 
 Then:
 1. Upload an audio file (.opus, .wav, .mp3, etc.)
-2. Click "Start Analysis"
-3. Watch real-time transcription and analysis
+2. **OR** place a file named `sample_call.opus` in the `data/` directory to use the built-in sample option.
+3. Click "Start Analysis"
+4. Watch real-time transcription and analysis
 
 ## Project Structure
 
